@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <h1>Мой профиль</h1>
+    
+    <div class="profile-info">
+        <h2>Информация</h2>
+        <p><strong>Имя:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
+        <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+        <a href="{% url 'users:change_password' %}" class="btn-change-password">Сменить пароль</a>
+    </div>
+    
+    <div class="user-comments">
+        <h2>Мои комментарии</h2>
+        {% for comment in user_comments %}
+            <div class="comment-item">
+                <p><strong>К новости:</strong> <a href="{% url 'news:news_detail' comment.news.pk %}">{{ comment.news.title }}</a></p>
+                <p><strong>Дата:</strong> {{ comment.created_date|date:"d.m.Y H:i" }}</p>
+                <p>{{ comment.text|truncatewords:30 }}</p>
+            </div>
+        {% empty %}
+            <p>Нет комментариев.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

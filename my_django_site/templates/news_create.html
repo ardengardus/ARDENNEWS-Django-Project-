@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать новость{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <h1>Создать новость</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-submit">Создать</button>
+        <a href="{% url 'news:news_list' %}" class="btn-cancel">Отмена</a>
+    </form>
+</div>
+{% endblock %}

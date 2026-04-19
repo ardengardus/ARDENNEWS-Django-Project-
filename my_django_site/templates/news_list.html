@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Новости{% endblock %}
+
+{% block content %}
+<div class="news-list-page">
+    <h1>Новости компании</h1>
+    
+    <div class="search-sort-bar">
+        <form method="get" class="search-form">
+            <input type="text" name="search" placeholder="Поиск..." value="{{ search_query }}">
+            <button type="submit">🔍 Найти</button>
+        </form>
+        
+        <div class="sort-options">
+            <span>Сортировать:</span>
+            <a href="?sort=pub_date_desc{% if search_query %}&search={{ search_query }}{% endif %}" class="sort-btn {% if current_sort == 'pub_date_desc' %}active{% endif %}">Новые</a>
+            <a href="?sort=pub_date_asc{% if search_query %}&search={{ search_query }}{% endif %}" class="sort-btn {% if current_sort == 'pub_date_asc' %}active{% endif %}">Старые</a>
+        </div>
+    </div>
+    
+    <div class="news-list">
+        {% for news_item in news %}
+            <div class="news-item">
+                {% if news_item.image %}
+                    <img src="{{ news_item.image.url }}" alt="{{ news_item.title }}" class="news-thumb">
+                {% endif %}
+                <div class="news-content">
+                    <h2><a href="{% url 'news:news_detail' news_item.pk %}">{{ news_item.title }}</a></h2>
+                    <p class="news-meta">📅 {{ news_item.pub_date|date:"d.m.Y" }} | ✍️ {{ news_item.author.username }} | 💬 {{ news_item.comments.count }} комментариев</p>
+                    <p>{{ news_item.content|truncatewords:50 }}</p>
+                    <a href="{% url 'news:news_detail' news_item.pk %}" class="read-more">Подробнее →</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>Новостей нет.</p>
+        {% endfor %}
+    </div>
+    
+    {% if news.has_other_pages %}
+        <div class="pagination">
+            {% if news.has_previous %}
+                <a href="?page=1">« Первая</a>
+                <a href="?page={{ news.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+            <span class="current-page">{{ news.number }} из {{ news.paginator.num_pages }}</span>
+            {% if news.has_next %}
+                <a href="?page={{ news.next_page_number }}">Следующая</a>
+                <a href="?page={{ news.paginator.num_pages }}">Последняя »</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

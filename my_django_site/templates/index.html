@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - ARDENNEWS{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <h1 class="hero-title">ARDENNEWS</h1>
+    <p class="hero-subtitle">Одно из главных СМИ за 2026 год</p>
+    <a href="{% url 'news:news_list' %}" class="btn-primary">Наши новости</a>
+</div>
+
+<div class="about-section">
+    <h2>О компании</h2>
+    <p>Мы - современная компания, предоставляющая качественные новости и регулярно производящие фактчекинг. Наша миссия - делать так, чтоб будущее было за всеми нами!.</p>
+    <div class="features">
+        <div class="feature">
+            <h3>🏆 10+ лет</h3>
+            <p>На рынке</p>
+        </div>
+        <div class="feature">
+            <h3>👥 1000+</h3>
+            <p>Клиентов</p>
+        </div>
+        <div class="feature">
+            <h3>⭐ 5 звезд</h3>
+            <p>Рейтинг</p>
+        </div>
+    </div>
+</div>
+
+<div class="latest-news">
+    <h2>Последние новости</h2>
+    <div class="news-grid">
+        {% for news_item in latest_news %}
+            <div class="news-card">
+                {% if news_item.image %}
+                    <img src="{{ news_item.image.url }}" alt="{{ news_item.title }}" class="news-image">
+                {% endif %}
+                <h3>{{ news_item.title }}</h3>
+                <p class="news-meta">📅 {{ news_item.pub_date|date:"d.m.Y" }} | ✍️ {{ news_item.author.username }}</p>
+                <p>{{ news_item.content|truncatewords:30 }}</p>
+                <a href="{% url 'news:news_detail' news_item.pk %}" class="read-more">Читать далее →</a>
+            </div>
+        {% empty %}
+            <p>Новостей пока нет.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

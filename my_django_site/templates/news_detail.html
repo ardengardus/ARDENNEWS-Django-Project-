@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ news.title }}{% endblock %}
+
+{% block content %}
+<div class="news-detail">
+    <article class="news-article">
+        <h1>{{ news.title }}</h1>
+        <div class="article-meta">
+            <span>📅 {{ news.pub_date|date:"d.m.Y H:i" }}</span>
+            <span>✍️ Автор: {{ news.author.username }}</span>
+            <span>💬 {{ comments.count }} комментариев</span>
+        </div>
+        
+        {% if news.image %}
+            <div class="article-image">
+                <img src="{{ news.image.url }}" alt="{{ news.title }}">
+            </div>
+        {% endif %}
+        
+        <div class="article-content">
+            {{ news.content|linebreaks }}
+        </div>
+        
+        {% if user.is_staff %}
+            <div class="admin-actions">
+                <a href="{% url 'news:news_edit' news.pk %}" class="btn-edit">✏️ Редактировать</a>
+                <a href="{% url 'news:news_delete' news.pk %}" class="btn-delete" onclick="return confirm('Удалить?')">🗑️ Удалить</a>
+            </div>
+        {% endif %}
+    </article>
+    
+    <div class="comments-section">
+        <h2>Комментарии ({{ comments.count }})</h2>
+        
+        {% if user.is_authenticated %}
+            <div class="add-comment">
+                <h3>Добавить комментарий</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn-submit">Отправить</button>
+                </form>
+            </div>
+        {% else %}
+            <p><a href="{% url 'users:login' %}">Войдите</a>, чтобы комментировать</p>
+        {% endif %}
+        
+        <div class="comments-list">
+            {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-header">
+                        <strong>{{ comment.author.username }}</strong>
+                        <span>{{ comment.created_date|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <p>{{ comment.text|linebreaks }}</p>
+                </div>
+            {% empty %}
+                <p>Пока нет комментариев.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
